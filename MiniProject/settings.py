@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-ls9d(r1eilo-#5%m5x_5p&9xe^#h&dqiv1aq&spyv-b+@_tvj(
 DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', 'queenvisualised.onrender.com','127.0.0.1']
-CSRF_TRUSTED_ORIGINS =['https://queenvisualised.onrender.com/']
+CSRF_TRUSTED_ORIGINS =['https://queenvisualised.onrender.com']
 
 
 # Application definition
