@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-ls9d(r1eilo-#5%m5x_5p&9xe^#h&dqiv1aq&spyv-b+@_tvj(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', 'https://queenvisualised.onrender.com/','127.0.0.1']
+ALLOWED_HOSTS = ['localhost', 'queenvisualised.onrender.com','127.0.0.1']
 CSRF_TRUSTED_ORIGINS =['https://queenvisualised.onrender.com/']
 
 
