@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Karatsuba Multiplication Visualization</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;700&display=swap" rel="stylesheet">
+    <style>
+        /* Styling */
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #1a1a2e;
+            color: #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 { color: #e94560; margin-bottom: 20px; }
+        form { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 20px; }
+        input[type="number"], button { padding: 10px; font-size: 1em; border: none; border-radius: 5px; }
+        button { background-color: #e94560; color: white; cursor: pointer; }
+        button:hover { background-color: #b33044; }
+        .steps, .result { margin-top: 20px; text-align: center; }
+    </style>
+</head>
+<body>
+    <h1>Karatsuba Algorithm Visualization</h1>
+
+    <form method="post" action="">
+        {% csrf_token %}
+        <label>Number 1:</label>
+        <input type="number" name="num1" required>
+        <label>Number 2:</label>
+        <input type="number" name="num2" {% if is_square %}disabled{% endif %}>
+        <label>
+            <input type="checkbox" name="is_square" {% if is_square %}checked{% endif %} onclick="toggleSecondInput()">
+            Square Number 1
+        </label>
+        <button type="submit">Calculate</button>
+    </form>
+
+    <div class="steps">
+        <h2>Steps</h2>
+        <ul id="steps-list">
+            {% for step in steps %}
+                <li style="display: none;">{{ step }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="result">
+        {% if result is not None %}
+            <h2>Result: {{ result }}</h2>
+        {% endif %}
+    </div>
+    
+    <script>
+        const stepsList = document.querySelectorAll("#steps-list li");
+        let delay = 1000; // 1-second delay
+
+        function showSteps() {
+            stepsList.forEach((step, index) => {
+                setTimeout(() => {
+                    step.style.display = "block";
+                }, delay * index);
+            });
+        }
+
+        function toggleSecondInput() {
+            const isSquare = document.querySelector('input[name="is_square"]').checked;
+            document.querySelector('input[name="num2"]').disabled = isSquare;
+        }
+
+        window.onload = showSteps;
+    </script>
+</body>
+</html>

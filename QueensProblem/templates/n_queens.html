@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>N-Queens Problem Visualization</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;700&display=swap" rel="stylesheet">
+    <style>
+        /* General styling as before */
+        body {
+            background-color: #1a1a2e;
+            color: #e0e0e0;
+            font-family: 'Montserrat', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            justify-content: center;
+        }
+
+        h1 {
+            color: #e94560;
+            font-weight: 700;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        form {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        input[type="number"] {
+            color: black !important;
+            font-size: 1em;
+            padding: 8px 12px;
+            border-radius: 5px;
+            border: none;
+            outline: none;
+        }
+        label, button {
+            color: #e0e0e0;
+            font-size: 1em;
+            padding: 8px 12px;
+            border-radius: 5px;
+            border: none;
+            outline: none;
+        }
+
+        button {
+            background-color: #e94560;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #b33044;
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 150px;
+            height: 6px;
+            background: #e94560;
+            border-radius: 5px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            cursor: pointer;
+        }
+
+        #chessboard {
+            display: grid;
+            gap: 4px;
+            border: 4px solid #e94560;
+            padding: 8px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+        }
+
+        .cell {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #e94560;
+            transition: background-color 0.3s ease;
+        }
+
+        .white {
+            background-color: #f0f0f5;
+        }
+
+        .black {
+            background-color: #333;
+        }
+
+        .queen {
+            color: #e94560;
+        }
+
+        .queen-animated {
+            animation: pop 0.4s ease;
+        }
+
+        @keyframes pop {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <h1>N-Queens Problem Visualization</h1>
+
+    <form method="get" action="">
+        <label for="n">Board Size:</label>
+        <input type="number" id="n" name="n" min="4" max="16" value="{{ n }}" required>
+        <button type="submit">Visualize</button>
+    </form>
+
+    <div class="controls">
+        <label for="speed">Speed:</label>
+        <input type="range" id="speed" min="50" max="1000" value="1000">
+        <span id="speedDisplay">1000 ms</span>
+    </div>
+
+    <div id="chessboard" class="chessboard"></div>
+    <div style="margin-top: 20px;">
+        <a href="{% url 'visualize_karatsuba' %}">
+            <button style="padding: 10px 20px; font-size: 1em; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                Visualize Karatsuba Algorithm
+            </button>
+        </a>
+    </div>
+    <script>
+        const steps = {{ steps|safe }};
+        let currentStep = 0;
+        const n = {{ n }};
+        const chessboard = document.getElementById('chessboard');
+        const speedControl = document.getElementById('speed');
+        const speedDisplay = document.getElementById('speedDisplay');
+        let stableQueens = new Array(n).fill(-1); 
+
+        function renderBoard(step) {
+            chessboard.innerHTML = '';
+            chessboard.style.gridTemplateColumns = `repeat(${n}, 50px)`;
+
+            for (let row = 0; row < n; row++) {
+                for (let col = 0; col < n; col++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell');
+                    if ((row + col) % 2 === 0) {
+                        cell.classList.add('white');
+                    } else {
+                        cell.classList.add('black');
+                    }
+
+                    if (step[row] === col) {
+                        const queen = document.createElement('span');
+                        queen.classList.add('queen');
+
+                        if (stableQueens[row] !== col) {
+                            queen.classList.add('queen-animated');
+                        }
+                        
+                        queen.textContent = '♕';
+                        cell.appendChild(queen);
+                    }
+                    chessboard.appendChild(cell);
+                }
+            }
+        }
+
+        function displayNextStep() {
+            if (currentStep < steps.length) {
+                renderBoard(steps[currentStep]);
+
+                steps[currentStep].forEach((col, row) => {
+                    if (stableQueens[row] !== col) {
+                        stableQueens[row] = col;
+                    }
+                });
+
+                currentStep++;
+                setTimeout(displayNextStep, speedControl.value);
+            }
+        }
+
+        speedControl.addEventListener('input', () => {
+            speedDisplay.textContent = `${speedControl.value} ms`;
+            currentStep = 0;
+            stableQueens = new Array(n).fill(-1);  
+            displayNextStep();
+        });
+
+        displayNextStep();
+    </script>
+</body>
+</html>

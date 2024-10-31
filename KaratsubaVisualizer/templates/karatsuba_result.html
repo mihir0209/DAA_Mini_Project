@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Karatsuba Multiplication Visualization</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f8ff;
+            color: #333;
+        }
+        .container {
+            margin: 0 auto;
+            max-width: 600px;
+            padding: 20px;
+            border: 2px solid #4CAF50;
+            border-radius: 10px;
+            background-color: #fff;
+        }
+        h2 {
+            margin-top: 20px;
+            color: #4CAF50;
+        }
+        .step {
+            font-size: 1.2em;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .split-step {
+            background-color: #e7f3fe;
+            border-left: 5px solid #2196F3;
+        }
+        .base-step {
+            background-color: #f9fbe7;
+            border-left: 5px solid #8BC34A;
+        }
+        .combine-step {
+            background-color: #fff3e0;
+            border-left: 5px solid #FF9800;
+        }
+        .final-result {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-top: 20px;
+            padding: 10px;
+            color: #d32f2f;
+        }
+    </style>
+    <script>
+        let steps = {{ steps|safe }};
+        let stepIndex = 0;
+
+        function displayStep() {
+            if (stepIndex < steps.length) {
+                const stepContainer = document.createElement('div');
+                let stepType = steps[stepIndex].type;
+
+                // Determine the class based on the type of step
+                if (stepType === 'split') {
+                    stepContainer.className = 'step split-step';
+                } else if (stepType === 'base') {
+                    stepContainer.className = 'step base-step';
+                } else if (stepType === 'combine') {
+                    stepContainer.className = 'step combine-step';
+                }
+
+                stepContainer.textContent = steps[stepIndex].text;
+                document.getElementById('steps').appendChild(stepContainer);
+                stepIndex++;
+                setTimeout(displayStep, 1000);  // 1-second delay between steps
+            } else {
+                // Display the final result
+                document.getElementById('finalResult').textContent = "Final Result: " + "{{ result }}";
+            }
+        }
+
+        window.onload = displayStep;
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Karatsuba Algorithm Visualization</h1>
+        <h2>Steps of the Calculation</h2>
+        <div id="steps"></div>
+        <div id="finalResult" class="final-result"></div>
+        <a href="{% url 'visualize_karatsuba' %}" style="margin-top: 20px; display: inline-block;">
+            <button style="padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                Run Another Calculation
+            </button>
+        </a>
+    </div>
+</body>
+</html>
